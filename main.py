@@ -5,27 +5,8 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter.scrolledtext import ScrolledText
 
-SPECIAL_SYMBOLS = {'exclam': '!', 'equal': '=', 'question': '?', 'space': " ", 'plus': '+', 'comma': ',',
-                           'period': '.', 'minus': '-', 'underscore': '_', 'apostrophe': "'", 'colon': ':',
-                           'semicolon': ';',
-                           'parenleft': '(', 'parenright': ')', 'braceleft': '{', 'bracketleft': '[',
-                           'braceright': '}', 'bracketright': ']', 'Cyrillic_SHORTI': 'Й', 'Cyrillic_TSE': 'Ц',
-                           'Cyrillic_U': 'У', 'Cyrillic_KA': 'К', 'Cyrillic_IE': 'Е', 'Cyrillic_EN': 'Н',
-                           'Cyrillic_GHE': 'Г', 'Cyrillic_SHA': 'Ш', 'Cyrillic_SHCHA': 'Щ', 'Cyrillic_ZE': 'З',
-                           'Cyrillic_EF': 'Ф', 'Cyrillic_YERU': 'Ы', 'Cyrillic_VE': 'В', 'Cyrillic_A': 'А',
-                           'Cyrillic_PE': 'П', 'Cyrillic_ER': 'Р', 'Cyrillic_O': 'О', 'Cyrillic_EL': 'Л',
-                           'Cyrillic_DE': 'Д', 'Cyrillic_YA': 'Я', 'Cyrillic_CHE': 'Ч', 'Cyrillic_ES': 'С',
-                           'Cyrillic_EM': 'М', 'Cyrillic_I': 'И', 'Cyrillic_TE': 'Т', 'Cyrillic_SOFTSIGN': 'Ь',
-                           'Cyrillic_BE': 'Б', 'Cyrillic_YU': 'Ю', 'Cyrillic_shorti': 'й', 'Cyrillic_tse': 'ц',
-                           'Cyrillic_u': 'у', 'Cyrillic_ka': 'к', 'Cyrillic_ie': 'е', 'Cyrillic_en': 'н',
-                           'Cyrillic_ghe': 'г', 'Cyrillic_sha': 'ш', 'Cyrillic_shcha': 'щ', 'Cyrillic_ze': 'з',
-                           'Cyrillic_ef': 'ф', 'Cyrillic_yeru': 'ы', 'Cyrillic_ve': 'в', 'Cyrillic_a': 'а',
-                           'Cyrillic_pe': 'п', 'Cyrillic_er': 'р', 'Cyrillic_o': 'о', 'Cyrillic_el': 'л',
-                           'Cyrillic_de': 'д', 'Cyrillic_ya': 'я', 'Cyrillic_che': 'ч', 'Cyrillic_es': 'с',
-                           'Cyrillic_em': 'м', 'Cyrillic_i': 'и', 'Cyrillic_te': 'т', 'Cyrillic_softsign': 'ь',
-                           'Cyrillic_be': 'б', 'Cyrillic_yu': 'ю', 'Cyrillic_ha': 'х', 'Cyrillic_hardsign': 'ъ',
-                           'Cyrillic_zhe': 'ж', 'Cyrillic_e': 'э', 'Cyrillic_io': 'ё', 'Cyrillic_HA': 'Х',
-                           'Cyrillic_HARDSIGN': 'Ъ', 'Cyrillic_ZHE': 'Ж', 'Cyrillic_E': 'Э', 'Cyrillic_IO': 'Ё'}
+from src.constans import SPECIAL_SYMBOLS
+
 
 class Window(tk.Tk):
 
@@ -56,6 +37,7 @@ class Window(tk.Tk):
         self = CONST_WINDOW_LIST[0]
         self.show()
 
+
 class MainMenuWindow(Window):
     def __init__(self):
         super().__init__()
@@ -78,6 +60,7 @@ class MainMenuWindow(Window):
         self.move_to_load_button.pack_forget()
         self.greeting.pack_forget()
 
+
 class TextSelectingWindow(Window):
     def selected(self, event):
         selected_indices = self.text_listbox.curselection()
@@ -86,11 +69,11 @@ class TextSelectingWindow(Window):
 
     def __init__(self):
         self.select_title = tk.Label(text="Select text for typing", font=("Comic Sans", 20))
-        text_directory = "./textes"
-        self.textes = os.listdir(text_directory)
-        for i in range(len(self.textes)):
-            self.textes[i] = self.textes[i][:-4]
-        text_helper = tk.Variable(value=self.textes)
+        text_directory = "./texts"
+        self.texts = os.listdir(text_directory)
+        for i in range(len(self.texts)):
+            self.texts[i] = self.texts[i][:-4]
+        text_helper = tk.Variable(value=self.texts)
         self.text_listbox = tk.Listbox(listvariable=text_helper, font=("Comic Sans", 15))
         self.text_listbox.bind("<<ListboxSelect>>", self.selected)
         self.list_scrollbar = ttk.Scrollbar(orient="vertical", command=self.text_listbox.yview)
@@ -106,7 +89,9 @@ class TextSelectingWindow(Window):
         self.text_listbox.pack_forget()
         self.list_scrollbar.pack_forget()
 
+
 CONST_WINDOW_LIST = [MainMenuWindow(), TextSelectingWindow()]
+
 
 class TrainingWindow(Window):
     def __init__(self, text_name):
@@ -116,7 +101,7 @@ class TrainingWindow(Window):
         self.train_name = tk.Label(text=text_name, font=("Comic Sans", 20))
         self.word_count = tk.Label(text="Words written: " + str(self.words_number), font=("Comic Sans", 20))
         self.train_window = ScrolledText(height=18, width=41, font=("Arial", 20), wrap='word')
-        real_path = "textes/" + text_name + ".txt"
+        real_path = os.path.join("texts", text_name + ".txt")
         self.text = ""
         text_file = open(real_path)
         for line in text_file:
@@ -162,7 +147,7 @@ class TrainingWindow(Window):
                 if (len(self.text) > 0 and self.letter_flag):
                     self.words_number += 1
                 self.game_time = round(time.time() - self.start_time, 2)
-                history_file_path = "./history/game_history.txt"
+                history_file_path = os.path.join("history", "game_history.txt")
                 history_file_read = open(history_file_path)
                 line_number = 1
                 for line in history_file_read:
@@ -180,6 +165,7 @@ class TrainingWindow(Window):
         self.word_count.pack_forget()
         self.train_window.pack_forget()
 
+
 class StatisticWindow(Window):
     def __init__(self):
         self.button_frame = tk.Frame()
@@ -188,7 +174,7 @@ class StatisticWindow(Window):
         self.clear_button = tk.Button(master=self.button_frame, text="Clear history", font=("Comic Sans", 14),
                                       command=lambda: self.clear_history())
         self.statistic_window = ScrolledText(height=18, width=41, font=("Arial", 20), wrap='word')
-        history_file_path = "./history/game_history.txt"
+        history_file_path = os.path.join("history", "game_history.txt")
         history_file = open(history_file_path, 'r')
         for line in history_file:
             self.statistic_window.insert(tk.END, line)
@@ -201,7 +187,7 @@ class StatisticWindow(Window):
         self.statistic_window.pack()
 
     def clear_history(self):
-        history_file_path = "./history/game_history.txt"
+        history_file_path = os.path.join("history", "game_history.txt")
         with open(history_file_path, 'wb'):
             pass
         self.statistic_window.config(state=tk.NORMAL)
@@ -212,6 +198,8 @@ class StatisticWindow(Window):
         self.back_button.pack_forget()
         self.clear_button.pack_forget()
         self.statistic_window.pack_forget()
+
+
 class FinishedGameWindow(Window):
     def __init__(self, previous):
         self.finish_text = tk.Label(text="Congratulations!", font=("Comic Sans", 20))
@@ -237,6 +225,7 @@ class FinishedGameWindow(Window):
         self.finish_text.pack_forget()
         self.select_new_game.pack_forget()
         self.menu_button.pack_forget()
+
 
 if __name__ == '__main__':
     Main_Menu = CONST_WINDOW_LIST[0]
